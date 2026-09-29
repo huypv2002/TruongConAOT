@@ -1,16 +1,36 @@
 # Global properties
-title-text: "Ventoy theme: Poly Dark (@jfcherng, @shvchk)"
-title-font: "Unifont Regular 22"
-title-color: "#FFFFFF"
+title-text: "TRUONG CON AOT - HỆ THỐNG CÀI ĐẶT WINDOWS 11 TỰ ĐỘNG"
+title-font: "Unifont Regular 16"
+title-color: "#00EEEE"
 desktop-image: "background.png"
-desktop-color: "#FFFFFF"
-terminal-font: "Unifont Regular 18"
+desktop-color: "#1a1b26"
+terminal-font: "Unifont Regular 16"
 terminal-box: "terminal_box_*.png"
 terminal-left: "0"
 terminal-top: "0"
 terminal-width: "100%"
 terminal-height: "100%"
 terminal-border: "0"
+
+# Header Branding
++ label {
+  left = 0
+  top = 7%
+  width = 100%
+  align = "center"
+  text = "TRUONG CON AOT - AUTOMATED WINDOWS 11 DEPLOYMENT"
+  color = "#00FFFF"
+  font = "Unifont Regular 16"
+}
++ label {
+  left = 0
+  top = 11%
+  width = 100%
+  align = "center"
+  text = "Hệ Thống Tối Ưu Tốc Độ - Tương Thích HP, Dell, Asus, Lenovo, PC Desktop"
+  color = "#888888"
+  font = "Unifont Regular 16"
+}
 
 # Boot menu
 + boot_menu {

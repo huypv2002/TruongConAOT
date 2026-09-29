@@ -14,6 +14,8 @@ if (-not (Test-Path $ConfigFile)) {
     exit 1
 }
 
+Write-Host "  [ TRUONG CON AOT ] Khởi chạy tiến trình cài Office 2024 LTSC ($Template)..." -ForegroundColor Cyan
+
 # Nếu chưa có setup.exe (ODT), tự động tải từ Microsoft chính thức
 if (-not (Test-Path $SetupExe)) {
     Write-Host "[INFO] Đang tải Office Deployment Tool chính hãng từ Microsoft..." -ForegroundColor Cyan

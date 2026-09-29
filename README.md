@@ -1,120 +1,113 @@
-# Auto-Win 11: Bộ Công Cụ Cài Đặt & Cấu Hình Windows 11 Tự Động Toàn Diện
+# Truong Con AOT - Bộ 3 Công Cụ Cài Đặt Windows 11 Toàn Diện
 
-Bộ công cụ tự động hóa toàn diện quá trình cài đặt Windows 11 dựa trên nền tảng **Ventoy Bootloader + Microsoft Unattended Engine + PowerShell AutoInstaller Engine**. Dự án tổng hợp đầy đủ các tính năng thực tế từ bộ giải pháp của tác giả `1172005thinh` (`AutoInstaller` & `QuickWinstall`), được tối ưu hóa 100% cho môi trường **Windows**, hoạt động hoàn toàn offline hoặc online không cần can thiệp thủ công.
-
----
-
-## 🌟 Tổng Hợp Toàn Bộ Tính Năng (Đầy Đủ 100%)
-
-### 1. Nền Tảng Khởi Động & Giao Diện Boot (Ventoy Bootloader)
-- **Theme GRUB2 Poly Dark**: Giao diện khởi động đồ họa cao cấp, hiển thị icon nhận diện Windows 11, Windows 10, Ubuntu, Arch, Kali...
-- **Bypass Phần Cứng Ngay Từ Ventoy**: Tích hợp sẵn `VTOY_WIN11_BYPASS_CHECK` và `VTOY_WIN11_BYPASS_NRO` trong `ventoy.json`.
-- **Menu Chọn Kịch Bản Tự Động (Auto-Install Plugin)**: Khi nhấn vào file ISO Windows 11, menu sẽ hiện 5 kịch bản linh hoạt:
-  1. `full_C.xml`: Tự động xóa sạch đĩa 0, tạo 1 ổ C, cài full apps, Office và drivers.
-  2. `full_C_D.xml`: Tự động xóa đĩa 0, chia sẵn ổ C (150GB hệ thống) và ổ D (toàn bộ phần còn lại lưu dữ liệu).
-  3. `full_mandisk.xml`: Cài full apps, Office và drivers nhưng dừng ở bước chọn ổ đĩa để người dùng chia tay an toàn.
-  4. `noapps_C.xml`: Chỉ cài Windows 11 nguyên bản sạch sẽ (không cài thêm phần mềm), chia 1 ổ C.
-  5. `noapps_mandisk.xml`: Chỉ cài Windows 11 nguyên bản sạch sẽ, tự chọn ổ đĩa bằng tay.
-
-### 2. Kịch Bản Windows Unattended (`autounattend.xml`)
-- Tự động vượt kiểm tra TPM 2.0, Secure Boot, RAM tối thiểu, CPU thế hệ cũ, Storage check.
-- Tự động tắt tính năng BitLocker Device Encryption (tránh rủi ro bị khóa mã hóa ổ đĩa).
-- Bỏ qua toàn bộ khảo sát OOBE, bỏ qua ép buộc tài khoản Microsoft, tự tạo tài khoản Offline `Admin` (không đặt mật khẩu).
-- Nhận diện và tự kích hoạt bản quyền số nếu máy có nhúng sẵn key trong BIOS (như máy Dell/HP); nếu không có thì ở trạng thái chờ kích hoạt sạch sẽ.
-- Tự động kích hoạt `AutoInstaller.ps1` ngay khi máy đăng nhập vào Desktop lần đầu.
-
-### 3. Bộ Cài Đặt Microsoft Office 2024 LTSC Chính Hãng (`office/`)
-- Cài đặt thông qua **Microsoft Office Deployment Tool (ODT)** chính thức từ Microsoft.
-- Hỗ trợ đa dạng các template XML:
-  - `wep_en.xml`: Word, Excel, PowerPoint (Tiếng Anh).
-  - `wep_vi.xml`: Word, Excel, PowerPoint (Tiếng Việt kèm Tiếng Anh).
-  - `full_en.xml`: Trọn bộ Office 2024 LTSC (Word, Excel, PowerPoint, Outlook, Access) Tiếng Anh.
-  - `full_vi.xml`: Trọn bộ Office 2024 LTSC Tiếng Việt.
-- Tự động tải ODT chính hãng và cài đặt ở chế độ ngầm (Silent Install), không chứa script crack.
-
-### 4. Quản Lý Driver Thông Minh (`scripts/install-drivers.ps1`)
-- **Tự động quét SDI**: Tìm kiếm công cụ **Snappy Driver Installer (SDI / SDIO)** trong USB và chạy tự động với cờ `-autoinstall -autoclose`.
-- **Dự phòng Windows Update**: Nếu USB không có sẵn driver offline, script tự động kích hoạt phiên cập nhật Driver từ máy chủ Microsoft để tải driver chuẩn xác cho phần cứng.
-
-### 5. Cấu Hình & Tinh Chỉnh Hệ Thống Chuyên Sâu (`scripts/configure-windows.ps1`)
-- **File Explorer**: Tự động hiển thị đuôi tập tin (`.exe`, `.txt`), mở File Explorer vào This PC thay vì Quick Access.
-- **Taskbar & Start Menu**: Căn lề Taskbar sang trái, bật lệnh **End Task** trên menu chuột phải, tắt Widgets (tin tức rác), tắt tìm kiếm Bing trên Start Menu.
-- **Debloat**: Tự động gỡ các ứng dụng rác cài sẵn (Candy Crush, TikTok, Spotify demo, Clipchamp, Xbox junk...).
-- **Hiệu năng & Quyền riêng tư**: Tắt Telemetry theo dõi của Windows, bật giao diện tối (Dark Mode), kích hoạt High Performance Power Plan.
-
-### 6. Cài Đặt Ứng Dụng Hàng Loạt (`scripts/AutoInstaller.ps1`)
-- Đọc cấu hình từ `config.ini` để cài đặt ứng dụng:
-  - Cài trực tiếp từ kho ứng dụng chính chủ **Microsoft Winget** (Chrome, VS Code, Git, Python, NodeJS, Unikey, Zalo, VLC, 7-Zip...).
-  - Hỗ trợ cài từ bộ cài offline trong thư mục `packages/` nếu không có mạng.
-- Tự động cài font chữ tiếng Việt/lập trình từ thư mục `fonts/`.
-- Xuất log chi tiết và file báo cáo hoàn tất với `exit code = 0`.
+Bộ giải pháp tự động hóa chuyên nghiệp mang thương hiệu **Truong Con AOT**, tách bạch rõ ràng thành **3 công cụ độc lập** giúp bạn kiểm soát 100% quá trình cài đặt, tương thích hoàn hảo cho cả **PC để bàn (Desktop)** và **Laptop** của tất cả các hãng (Dell, Asus, HP, Lenovo, MSI, Gigabyte...).
 
 ---
 
-## 📂 Cấu Trúc Dự Án Chi Tiết
+## 🌟 Cấu Trúc Bộ 3 Công Cụ (3-Tool Architecture)
+
+```mermaid
+flowchart LR
+    USB[Chiếc USB Duy Nhất] --> T1[Tool 1: Cài Win Tự Động]
+    USB --> T2[Tool 2: Driver Updater]
+    USB --> T3[Tool 3: App Installer]
+    
+    T1 -->|Bước 1: Boot USB| OS[Cài đặt Windows 11 sạch sẽ siêu tốc]
+    OS -->|Bước 2: Vào Win chạy| T2
+    T2 -->|Bước 3: Màn hình nét, đủ Wifi| T3
+    T3 --> Done[Hệ thống hoàn chỉnh sẵn sàng làm việc!]
+```
+
+| Công cụ | Vị trí trên USB | Chức năng chính |
+| :--- | :--- | :--- |
+| **Tool 1: Cài Win Tự Động** | Thư mục `ventoy/` | Boot USB, vượt rào cản phần cứng TPM/RAM/CPU, tự chia ổ đĩa, tạo tài khoản `Admin`, vào thẳng Desktop trong 5 - 8 phút. |
+| **Tool 2: Driver Updater** | `Tools/2-Driver-Tool/` | Quét phần cứng, cập nhật card đồ họa (NVIDIA/AMD), âm thanh, Wifi qua SDI Offline hoặc máy chủ Microsoft Windows Update. |
+| **Tool 3: App Installer** | `Tools/3-App-Tool/` | Cài đặt trọn bộ Visual C++ (2005-2022), Office 2024 LTSC (ODT), trình duyệt, công cụ lập trình (VS Code, Git, Python, NodeJS), tối ưu giao diện và đăng ký thương hiệu **Truong Con AOT**. |
+
+---
+
+## 📂 Cấu Trúc Thư Mục Dự Án
 
 ```plaintext
-auto-win/
+TruongConAOT/
 ├── .gitignore
-├── README.md                       # Tài liệu hướng dẫn chi tiết
+├── README.md                           # Tài liệu hướng dẫn sử dụng
+├── Setup-USB-Windows.bat               # Kịch bản 1-click trên Windows sao chép trọn bộ 3 tool vào USB
 │
-├── ventoy/                         # Toàn bộ cấu hình nạp vào USB Ventoy
-│   ├── ventoy.json                 # Cấu hình plugin Ventoy (Theme, Menu 5 kịch bản, Bypass)
-│   ├── ventoy_vhdboot.img          # Module boot VHD
-│   ├── ventoy_wimboot.img          # Module boot WIM
-│   ├── theme/poly-dark/            # Giao diện bootloader GRUB2 Poly Dark
-│   └── unattend/                   # 5 Kịch bản cài đặt tự động
-│       ├── full_C.xml              # Kịch bản 1: Full Apps + Drivers + Chia 1 ổ C
-│       ├── full_C_D.xml            # Kịch bản 2: Full Apps + Drivers + Chia ổ C (150GB) & D
-│       ├── full_mandisk.xml        # Kịch bản 3: Full Apps + Drivers + Tự chọn ổ đĩa
-│       ├── noapps_C.xml            # Kịch bản 4: Win sạch + Chia 1 ổ C
-│       └── noapps_mandisk.xml      # Kịch bản 5: Win sạch + Tự chọn ổ đĩa
+├── ventoy/                             # [TOOL 1] BỘ NẠP BOOT CÀI WIN TỰ ĐỘNG
+│   ├── ventoy.json                     # Cấu hình nạp Theme Poly Dark & Bypass Win11
+│   ├── ventoy_vhdboot.img              # Module boot VHD
+│   ├── ventoy_wimboot.img              # Module boot WIM
+│   ├── theme/poly-dark/                # Giao diện boot đồ họa màu tối cao cấp
+│   └── unattend/                       # 3 Kịch bản cài Win sạch sẽ
+│       ├── auto_wipe_disk_C.xml        # Máy trống: Tự xóa đĩa 0 và chia 1 ổ C
+│       ├── auto_wipe_disk_C_D.xml      # Máy trống ổ lớn: Tự chia ổ C (150GB) + D (dữ liệu)
+│       └── manual_disk_selection.xml   # Chọn ổ đĩa bằng tay: An toàn cho PC nhiều ổ SSD/HDD
 │
-├── office/                         # Module cài đặt Microsoft Office 2024 LTSC qua ODT
-│   ├── Install-Office.ps1          # Script tự tải ODT và cài đặt ngầm
-│   ├── wep_en.xml                  # Word, Excel, PowerPoint (EN)
-│   ├── wep_vi.xml                  # Word, Excel, PowerPoint (VI)
-│   ├── full_en.xml                 # Trọn bộ Office 2024 (EN)
-│   └── full_vi.xml                 # Trọn bộ Office 2024 (VI)
-│
-└── scripts/                        # Bộ công cụ tự động hóa chạy trên Windows
-    ├── AutoInstaller.ps1           # Master Engine điều phối cài app, driver, tweaks
-    ├── config.ini                  # File cấu hình danh sách app & cài đặt tổng
-    ├── install-drivers.ps1         # Module tự quét SDI hoặc gọi Windows Update
-    ├── configure-windows.ps1       # Module tinh chỉnh Windows, gỡ bloatware, dark mode
-    ├── configure-windows.ini       # File cấu hình chi tiết cho configure-windows
-    └── Setup-USB-Windows.bat       # Kịch bản 1-click trên Windows đồng bộ toàn bộ vào USB
+└── Tools/                              # CÁC TOOL NẰM SẴN TRONG USB SAU KHI VÀO WIN
+    ├── 2-Driver-Tool/                  # [TOOL 2] KIỂM TRA & CÀI ĐẶT DRIVER
+    │   ├── Run-DriverUpdater.bat       # File chạy 1-click (Double-click là chạy)
+    │   ├── driver-engine.ps1           # Engine quét SDI + Windows Update API
+    │   └── README.md                   # Hướng dẫn chi tiết
+    │
+    └── 3-App-Tool/                     # [TOOL 3] CÀI PHẦN MỀM & MÔI TRƯỜNG DEV
+        ├── Run-AppInstaller.bat        # File chạy 1-click (Double-click là chạy)
+        ├── app-engine.ps1              # Master engine cài app, VC++ AIO, Tweaks
+        ├── apps.ini                    # Bật/tắt danh sách phần mềm muốn cài
+        ├── configure-windows.ps1       # Tinh chỉnh Windows, Dark mode, gỡ bloatware
+        └── office/                     # Module Office 2024 LTSC qua ODT chính hãng
+            ├── Install-Office.ps1      # Tự tải ODT và cài đặt ngầm
+            ├── wep_en.xml              # Word, Excel, PowerPoint (EN)
+            ├── wep_vi.xml              # Word, Excel, PowerPoint (VI)
+            ├── full_en.xml             # Trọn bộ Office 2024 (EN)
+            └── full_vi.xml             # Trọn bộ Office 2024 (VI)
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Sử Dụng Trên Máy Windows (Step-by-Step)
+## 🚀 Hướng Dẫn Sử Dụng (Quy Trình 3 Bước Chuẩn Chỉ)
 
-### Bước 1: Tạo USB Ventoy
-1. Tải [Ventoy for Windows](https://www.ventoy.net/en/download.html) (file `ventoy-x.x.xx-windows.zip`).
-2. Mở `Ventoy2Disk.exe`, cắm USB vào máy.
-3. Chọn **Option -> Partition Style -> GPT**, bấm **Install**.
-
-### Bước 2: Đồng Bộ Dự Án Vào USB Với 1 Cú Click
-1. Clone hoặc pull repository này về máy Windows:
+### Bước 1: Chuẩn Bị Chiếc USB Trên Máy Windows
+1. Tải công cụ [Ventoy for Windows](https://www.ventoy.net/en/download.html) (file `ventoy-x.x.xx-windows.zip` rồi giải nén).
+2. Chạy file `Ventoy2Disk.exe`, cắm USB vào, chọn **Option -> Partition Style -> GPT**, bấm **Install**.
+3. Clone dự án này về máy Windows:
    ```cmd
-   git clone <URL_REPO_CUA_BAN>
-   cd auto-win
+   git clone https://github.com/huypv2002/TruongConAOT.git
+   cd TruongConAOT
    ```
-2. Chuột phải vào file `scripts\Setup-USB-Windows.bat` -> chọn **Run as administrator**.
-3. Nhập ký tự ổ đĩa USB của bạn (ví dụ: `E` hoặc `F`) -> Bấm Enter.
-4. Kịch bản sẽ tự động sao chép toàn bộ thư mục `ventoy\`, `scripts\`, và `office\` vào USB.
+4. Chuột phải vào file **`Setup-USB-Windows.bat`** -> chọn **Run as administrator** -> nhập ký tự ổ USB (ví dụ: `E`). Toàn bộ kịch bản và 3 công cụ sẽ được tự động copy vào USB.
+5. Tải file ISO Windows 11 từ Microsoft, đổi tên thành **`Win11.iso`** và copy thả vào thư mục gốc của USB.
 
-### Bước 3: Thêm Bộ Cài Windows 11
-1. Tải file ISO Windows 11 từ Microsoft: [Download Windows 11](https://www.microsoft.com/software-download/windows11).
-2. Đổi tên file tải về thành: **`Win11.iso`**
-3. Chép file `Win11.iso` vào thư mục gốc của USB.
+---
 
-### Bước 4: Khởi Động & Cài Đặt
-1. Cắm USB vào máy HP, bật nguồn và **bấm liên tục phím `F9`** để mở Boot Menu.
+### Bước 2: Dùng Tool 1 Để Cài Đặt Windows 11 Tự Động
+1. Cắm USB vào máy tính cần cài, bật nguồn và bấm phím tắt Boot Menu:
+   - **HP**: Bấm phím **`F9`**
+   - **Dell**: Bấm phím **`F12`**
+   - **ASUS PC**: Bấm **`F8`** (Laptop ASUS bấm **`Esc`**)
+   - **Mainboard PC tự ráp (Gigabyte/MSI/ASRock)**: Bấm **`F11`** hoặc **`F12`**
 2. Chọn boot vào USB Ventoy (UEFI).
 3. Màn hình Poly Dark xuất hiện -> Chọn file **`Win11.iso`**.
-4. Menu tự động hiện lên 5 tùy chọn:
-   - Nếu máy trống muốn tự làm tất cả: Chọn **`Boot with /ventoy/unattend/full_C.xml`**.
-   - Nếu máy có dữ liệu muốn tự chọn ổ đĩa: Chọn **`Boot with /ventoy/unattend/full_mandisk.xml`**.
-5. Máy tính sẽ tự hoàn tất mọi khâu và đưa bạn vào thẳng Desktop với đầy đủ ứng dụng, Office và driver!
+4. Menu tự động hiện lên:
+   - Nếu máy trống: Chọn **`auto_wipe_disk_C.xml`**.
+   - Nếu PC cắm nhiều ổ cứng có dữ liệu: Chọn **`manual_disk_selection.xml`** để tự click chọn ổ SSD mong muốn.
+5. Máy sẽ tự cài đặt và vào thẳng màn hình Desktop trong 5 - 8 phút!
+
+---
+
+### Bước 3: Dùng Tool 2 & Tool 3 Trong Màn Hình Windows
+Khi đã vào màn hình Desktop Windows 11, bạn mở ổ USB ra sẽ thấy ngay thư mục **`Tools`**:
+
+#### 1. Cập nhật Driver (Tool 2):
+- Vào thư mục `Tools\2-Driver-Tool\` -> Nhấp đúp chuột vào file **`Run-DriverUpdater.bat`**.
+- Tool sẽ tự động quét linh kiện phần cứng và kéo đầy đủ driver chuẩn xác về máy.
+
+#### 2. Cài đặt Phần mềm & Tối ưu hóa (Tool 3):
+- Vào thư mục `Tools\3-App-Tool\` -> Nhấp đúp chuột vào file **`Run-AppInstaller.bat`**.
+- Tool sẽ tự động:
+  - Cài đặt trọn bộ Microsoft Visual C++ Redistributable (2005 - 2022).
+  - Bật Developer Mode & cho phép đường dẫn dài (> 260 ký tự) cho lập trình viên.
+  - Cài đặt Microsoft Office 2024 LTSC chính hãng theo template đã chọn.
+  - Cài đặt sạch các phần mềm đã chọn trong `apps.ini` (Chrome, VS Code, Git, Python, NodeJS, Unikey, Zalo...).
+  - Dọn dẹp bloatware rác của Windows 11, kích hoạt Dark Mode, tối ưu Taskbar.
+  - Ghi nhận thông tin bản dựng mang thương hiệu **Truong Con AOT**.

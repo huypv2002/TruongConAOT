@@ -17,61 +17,49 @@
         {
             "image": "/Win11.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         },
         {
             "image": "/Win11_24H2_English_x64.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         },
         {
             "image": "/Win11_English_x64.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         },
         {
             "image": "/Windows11.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         },
         {
             "image": "/Windows.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         },
         {
             "image": "/_ISO/Win11.iso",
             "template": [
-                "/ventoy/unattend/full_C.xml",
-                "/ventoy/unattend/full_C_D.xml",
-                "/ventoy/unattend/full_mandisk.xml",
-                "/ventoy/unattend/noapps_C.xml",
-                "/ventoy/unattend/noapps_mandisk.xml"
+                "/ventoy/unattend/auto_wipe_disk_C.xml",
+                "/ventoy/unattend/auto_wipe_disk_C_D.xml",
+                "/ventoy/unattend/manual_disk_selection.xml"
             ]
         }
     ],

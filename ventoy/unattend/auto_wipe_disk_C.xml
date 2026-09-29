@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <!-- KỊCH BẢN: NOAPPS C (Chỉ cài Windows 11 sạch sẽ, không cài thêm app, tự chia 1 ổ C) -->
+    <!-- TOOL 1: CÀI WIN TỰ ĐỘNG - KỊCH BẢN XÓA SẠCH ĐĨA 0 & TẠO 1 Ổ C -->
     <settings pass="windowsPE">
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage><UILanguage>en-US</UILanguage></SetupUILanguage>
@@ -10,6 +10,7 @@
             <UserLocale>en-US</UserLocale>
         </component>
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <!-- Bypass 5 bài test phần cứng của Windows 11 -->
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
@@ -32,6 +33,7 @@
                     <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassCPUCheck /t REG_DWORD /d 1 /f</Path>
                 </RunSynchronousCommand>
             </RunSynchronous>
+            <!-- Tự động phân vùng đĩa 0 chuẩn GPT -->
             <DiskConfiguration>
                 <Disk wcm:action="add">
                     <DiskID>0</DiskID>
@@ -98,6 +100,7 @@
             <ComputerName>*</ComputerName>
             <TimeZone>SE Asia Standard Time</TimeZone>
         </component>
+        <!-- Tắt BitLocker Device Encryption -->
         <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
@@ -124,10 +127,13 @@
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
                 <ProtectYourPC>3</ProtectYourPC>
             </OOBE>
+            <RegisteredOwner>Truong Con AOT</RegisteredOwner>
+            <RegisteredOrganization>Truong Con AOT Ecosystem</RegisteredOrganization>
+            <!-- Tạo tài khoản Local Admin không mật khẩu -->
             <UserAccounts>
                 <LocalAccounts>
                     <LocalAccount wcm:action="add">
-                        <Description>Tài khoản Quản trị cục bộ</Description>
+                        <Description>Local Administrator</Description>
                         <DisplayName>Admin</DisplayName>
                         <Group>Administrators</Group>
                         <Name>Admin</Name>
@@ -135,6 +141,7 @@
                     </LocalAccount>
                 </LocalAccounts>
             </UserAccounts>
+            <!-- Vào thẳng Desktop -->
             <AutoLogon>
                 <Password><Value></Value><PlainText>true</PlainText></Password>
                 <Enabled>true</Enabled>
