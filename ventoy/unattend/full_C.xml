@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <!-- GIAI ĐOẠN 1: Windows PE (Bypass phần cứng + HIỆN BẢNG CHỌN Ổ ĐĨA THỦ CÔNG) -->
+    <!-- KỊCH BẢN: FULL C (Tự động xóa sạch đĩa 0, tạo 1 ổ C, cài full apps và drivers) -->
     <settings pass="windowsPE">
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SetupUILanguage>
-                <UILanguage>en-US</UILanguage>
-            </SetupUILanguage>
+            <SetupUILanguage><UILanguage>en-US</UILanguage></SetupUILanguage>
             <InputLocale>0409:00000409</InputLocale>
             <SystemLocale>en-US</SystemLocale>
             <UILanguage>en-US</UILanguage>
             <UserLocale>en-US</UserLocale>
         </component>
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <!-- Bypass kiểm tra phần cứng Windows 11 (TPM, Secure Boot, RAM, CPU, Storage) -->
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
@@ -35,11 +32,55 @@
                     <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassCPUCheck /t REG_DWORD /d 1 /f</Path>
                 </RunSynchronousCommand>
             </RunSynchronous>
-            <!-- Dừng lại ở bước phân vùng để người dùng tự chọn ổ cài đặt an toàn -->
+            <DiskConfiguration>
+                <Disk wcm:action="add">
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                    <CreatePartitions>
+                        <CreatePartition wcm:action="add">
+                            <Order>1</Order>
+                            <Type>EFI</Type>
+                            <Size>300</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>2</Order>
+                            <Type>MSR</Type>
+                            <Size>16</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>3</Order>
+                            <Type>Primary</Type>
+                            <Extend>true</Extend>
+                        </CreatePartition>
+                    </CreatePartitions>
+                    <ModifyPartitions>
+                        <ModifyPartition wcm:action="add">
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                            <Format>FAT32</Format>
+                            <Label>System</Label>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="add">
+                            <Order>2</Order>
+                            <PartitionID>2</PartitionID>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="add">
+                            <Order>3</Order>
+                            <PartitionID>3</PartitionID>
+                            <Format>NTFS</Format>
+                            <Label>Windows</Label>
+                            <Letter>C</Letter>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                </Disk>
+            </DiskConfiguration>
             <ImageInstall>
                 <OSImage>
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>3</PartitionID>
+                    </InstallTo>
                     <InstallToAvailablePartition>false</InstallToAvailablePartition>
-                    <WillShowUI>Always</WillShowUI>
                 </OSImage>
             </ImageInstall>
             <UserData>
@@ -52,13 +93,11 @@
         </component>
     </settings>
 
-    <!-- GIAI ĐOẠN 2: Specialize (Tên máy tính + Tắt BitLocker) -->
     <settings pass="specialize">
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <ComputerName>HP-PC</ComputerName>
             <TimeZone>SE Asia Standard Time</TimeZone>
         </component>
-        <!-- Ngăn chặn Windows tự động bật BitLocker mã hóa ổ đĩa -->
         <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
@@ -69,7 +108,6 @@
         </component>
     </settings>
 
-    <!-- GIAI ĐOẠN 3: OOBE (Tự động bỏ qua khảo sát, tạo tài khoản Local Admin, vào thẳng Desktop) -->
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <InputLocale>0409:00000409</InputLocale>
@@ -86,7 +124,6 @@
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
                 <ProtectYourPC>3</ProtectYourPC>
             </OOBE>
-            <!-- Tạo tài khoản Offline: Admin (Không đặt mật khẩu) -->
             <UserAccounts>
                 <LocalAccounts>
                     <LocalAccount wcm:action="add">
@@ -94,24 +131,16 @@
                         <DisplayName>Admin</DisplayName>
                         <Group>Administrators</Group>
                         <Name>Admin</Name>
-                        <Password>
-                            <Value></Value>
-                            <PlainText>true</PlainText>
-                        </Password>
+                        <Password><Value></Value><PlainText>true</PlainText></Password>
                     </LocalAccount>
                 </LocalAccounts>
             </UserAccounts>
-            <!-- Tự động đăng nhập vào Desktop ngay khi cài xong -->
             <AutoLogon>
-                <Password>
-                    <Value></Value>
-                    <PlainText>true</PlainText>
-                </Password>
+                <Password><Value></Value><PlainText>true</PlainText></Password>
                 <Enabled>true</Enabled>
                 <LogonCount>1</LogonCount>
                 <Username>Admin</Username>
             </AutoLogon>
-            <!-- Tự động kích hoạt AutoInstaller từ USB khi vào Desktop lần đầu -->
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
                     <Order>1</Order>

@@ -1,11 +1,12 @@
 # ==============================================================================
-# AutoInstaller - Windows 11 Post-Installation Automation Engine
+# AutoInstaller - Windows 11 Post-Installation Master Engine
 # ==============================================================================
 #Requires -RunAsAdministrator
 
 $Host.UI.RawUI.WindowTitle = "AutoInstaller - Live Log"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
 $IniFile = Join-Path $ScriptDir "config.ini"
 $StartTime = Get-Date
 
@@ -13,7 +14,7 @@ $StartTime = Get-Date
 Write-Host ""
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host "                       AUTOINSTALLER - LIVE LOG                       " -ForegroundColor Green
-Write-Host "                   Windows 11 Post-Install Engine                     " -ForegroundColor DarkGray
+Write-Host "             Comprehensive Windows 11 Automation Engine               " -ForegroundColor DarkGray
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -54,28 +55,44 @@ Log-Message "Khởi động kịch bản cấu hình Windows tự động..." "C
 Log-Message "Thư mục kịch bản: $ScriptDir" "DarkGray"
 
 # ------------------------------------------------------------------------------
-# 1. DRIVER INSTALLATION (Snappy Driver Installer)
+# 1. DRIVER INSTALLATION (Snappy Driver Installer & Windows Update)
 # ------------------------------------------------------------------------------
 Write-Host ""
-Log-Message ">> [1/4] Kiểm tra và cài đặt Drivers..." "Yellow"
-$SDIPath = Join-Path $ScriptDir $Config.Driver.SDIPath
-if ($Config.Driver.EnableSDI -eq "true" -and (Test-Path $SDIPath)) {
-    Log-Message "Phát hiện Snappy Driver Installer. Đang tiến hành cài đặt..." "Green"
-    try {
-        Start-Process -FilePath $SDIPath -ArgumentList $Config.Driver.SDIArgs -Wait -NoNewWindow
-        Log-Message "[OK] Đã hoàn tất quét và cập nhật Driver qua SDI." "Green"
-    } catch {
-        Log-Message "[WARN] Lỗi khi chạy SDI: $_" "Red"
-    }
+Log-Message ">> [1/5] Quét và cài đặt Drivers..." "Yellow"
+$DriverScript = Join-Path $ScriptDir "install-drivers.ps1"
+if (Test-Path $DriverScript) {
+    & $DriverScript
 } else {
-    Log-Message "[SKIP] Không tìm thấy driver offline trong USB (sẽ dùng Windows Update sau)." "DarkYellow"
+    Log-Message "[SKIP] Không tìm thấy script cài driver." "DarkGray"
 }
 
 # ------------------------------------------------------------------------------
-# 2. CÀI ĐẶT ỨNG DỤNG (Applications)
+# 2. CÀI ĐẶT MICROSOFT OFFICE (ODT chính hãng Microsoft)
 # ------------------------------------------------------------------------------
 Write-Host ""
-Log-Message ">> [2/4] Đang cài đặt các ứng dụng đã cấu hình trong config.ini..." "Yellow"
+Log-Message ">> [2/5] Kiểm tra cài đặt Microsoft Office 2024 LTSC..." "Yellow"
+if ($Config.Office.EnableOffice -eq "true") {
+    $officeScript = Join-Path $ProjectRoot "office\Install-Office.ps1"
+    if (-not (Test-Path $officeScript)) {
+        $officeScript = Join-Path $ScriptDir "..\office\Install-Office.ps1"
+    }
+    $template = if ($Config.Office.OfficeTemplate) { $Config.Office.OfficeTemplate } else { "wep_en.xml" }
+    
+    if (Test-Path $officeScript) {
+        Log-Message "Đang gọi module cài đặt Office Deployment Tool (Template: $template)..." "Cyan"
+        & $officeScript -Template $template
+    } else {
+        Log-Message "[SKIP] Không tìm thấy module cài đặt Office trong thư mục office/." "DarkYellow"
+    }
+} else {
+    Log-Message "[SKIP] Tùy chọn cài Office đã tắt trong config.ini." "DarkGray"
+}
+
+# ------------------------------------------------------------------------------
+# 3. CÀI ĐẶT ỨNG DỤNG (Applications via Winget & Offline)
+# ------------------------------------------------------------------------------
+Write-Host ""
+Log-Message ">> [3/5] Đang cài đặt các ứng dụng đã cấu hình trong config.ini..." "Yellow"
 
 $TotalTargets = 0
 $InstalledTargets = 0
@@ -88,9 +105,7 @@ if ($Config.Applications) {
         $targetId = if ($parts.Count -gt 1) { $parts[1].Trim() } else { $appKey }
         $displayName = if ($parts.Count -gt 2) { $parts[2].Trim() } else { $targetId }
 
-        if (-not $enabled) {
-            continue
-        }
+        if (-not $enabled) { continue }
 
         $TotalTargets++
         $offlineExe = Join-Path $ScriptDir "packages\$targetId"
@@ -109,7 +124,7 @@ if ($Config.Applications) {
                 Write-Host "[ERROR] $_" -ForegroundColor Red
             }
         } else {
-            # Cài đặt thông qua Microsoft Winget
+            # Cài đặt thông qua Microsoft Winget chính chủ
             Write-Host ("  {0,-35} : " -f $displayName) -NoNewline
             $wingetCmd = Get-Command winget.exe -ErrorAction SilentlyContinue
             if ($wingetCmd) {
@@ -129,10 +144,10 @@ if ($Config.Applications) {
 Log-Message "Hoàn tất cài đặt ứng dụng: $InstalledTargets / $TotalTargets targets thành công." "Cyan"
 
 # ------------------------------------------------------------------------------
-# 3. CÀI ĐẶT FONTS
+# 4. CÀI ĐẶT FONTS
 # ------------------------------------------------------------------------------
 Write-Host ""
-Log-Message ">> [3/4] Đang kiểm tra và cài đặt fonts..." "Yellow"
+Log-Message ">> [4/5] Đang kiểm tra và cài đặt fonts..." "Yellow"
 $FontsDir = Join-Path $ScriptDir "fonts"
 if (Test-Path $FontsDir) {
     $fontFiles = Get-ChildItem -Path $FontsDir -Include "*.ttf", "*.otf" -Recurse
@@ -149,44 +164,15 @@ if (Test-Path $FontsDir) {
 }
 
 # ------------------------------------------------------------------------------
-# 4. CẤU HÌNH & TINH CHỈNH WINDOWS (Tweaks)
+# 5. CẤU HÌNH & TINH CHỈNH WINDOWS (configure-windows.ps1)
 # ------------------------------------------------------------------------------
 Write-Host ""
-Log-Message ">> [4/4] Đang cấu hình và tối ưu Windows 11..." "Yellow"
-
-try {
-    # Bật Dark Mode cho Apps và System
-    if ($Config.Tweaks.EnableDarkMode -eq "true") {
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Log-Message "  - Kích hoạt Dark Mode (Giao diện tối)" "Green"
-    }
-
-    # Hiện đuôi file mở rộng (File Extensions)
-    if ($Config.Tweaks.ShowFileExtensions -eq "true") {
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Log-Message "  - Hiển thị phần mở rộng tập tin (file extensions)" "Green"
-    }
-
-    # Căn thanh Taskbar sang bên trái (Kiểu cổ điển tiện làm việc)
-    if ($Config.Tweaks.AlignTaskbarLeft -eq "true") {
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Log-Message "  - Căn thanh Taskbar sang lề trái" "Green"
-    }
-
-    # Tắt quảng cáo và tìm kiếm Bing trong Start Menu
-    if ($Config.Tweaks.DisableBingSearchInStart -eq "true") {
-        Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Log-Message "  - Tắt tìm kiếm Bing trong Start Menu" "Green"
-    }
-
-    # Tắt BitLocker Device Encryption
-    if ($Config.Tweaks.DisableBitLocker -eq "true") {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\BitLocker" -Name "PreventDeviceEncryption" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Log-Message "  - Đã ngăn chặn BitLocker tự động khóa ổ đĩa" "Green"
-    }
-} catch {
-    Log-Message "[WARN] Lỗi khi tinh chỉnh Windows: $_" "Red"
+Log-Message ">> [5/5] Cấu hình và tinh chỉnh Windows 11..." "Yellow"
+$ConfigWinScript = Join-Path $ScriptDir "configure-windows.ps1"
+if (Test-Path $ConfigWinScript) {
+    & $ConfigWinScript
+} else {
+    Log-Message "[SKIP] Không tìm thấy script configure-windows.ps1." "DarkGray"
 }
 
 # ------------------------------------------------------------------------------
@@ -205,7 +191,7 @@ Write-Host "====================================================================
 Write-Host ""
 
 if ($Config.General.RebootAfterInstall -eq "true") {
-    Log-Message "Hệ thống sẽ khởi động lại sau 10 giây để áp dụng thay đổi..." "Yellow"
+    Log-Message "Hệ thống sẽ khởi động lại sau 10 giây để áp dụng toàn diện driver và thiết lập..." "Yellow"
     Start-Sleep -Seconds 10
     Restart-Computer -Force
 } else {

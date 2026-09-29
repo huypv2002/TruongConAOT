@@ -8,7 +8,7 @@ echo                  SETUP VENTOY USB FOR WINDOWS 11 AUTO
 echo ======================================================================
 echo.
 echo Kịch bản này sẽ tự động sao chép các file cấu hình, kịch bản tự động,
-echo và giao diện theme vào USB Ventoy của bạn.
+echo giao diện theme, và bộ cài Office vào USB Ventoy của bạn.
 echo.
 
 set /p USB_DRIVE="Nhập ký tự ổ đĩa USB của bạn (Ví dụ: E hoặc F): "
@@ -36,6 +36,11 @@ echo.
 echo [*] Đang sao chép thư mục scripts vào %TARGET%\ventoy\scripts ...
 if not exist "%TARGET%\ventoy\scripts" mkdir "%TARGET%\ventoy\scripts"
 xcopy /E /I /Y "%~dp0" "%TARGET%\ventoy\scripts"
+
+echo.
+echo [*] Đang sao chép thư mục office vào %TARGET%\ventoy\office ...
+if not exist "%TARGET%\ventoy\office" mkdir "%TARGET%\ventoy\office"
+xcopy /E /I /Y "%~dp0..\office" "%TARGET%\ventoy\office"
 
 echo.
 echo ======================================================================
