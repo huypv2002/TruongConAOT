@@ -1,0 +1,102 @@
+{
+    "control": [
+        { "VTOY_DEFAULT_MENU_MODE": "1" },
+        { "VTOY_FILT_DOT_UNDERSCORE_FILE": "1" },
+        { "VTOY_WIN11_BYPASS_CHECK": "1" },
+        { "VTOY_WIN11_BYPASS_NRO": "1" }
+    ],
+    "theme": {
+        "file": "/ventoy/theme/poly-dark/theme.txt",
+        "gfxmode": "1920x1080",
+        "display_mode": "GUI",
+        "ventoy_left": "5%",
+        "ventoy_top": "95%",
+        "ventoy_color": "#00ffcc"
+    },
+    "auto_install": [
+        {
+            "image": "/Win11.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        },
+        {
+            "image": "/Win11_24H2_English_x64.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        },
+        {
+            "image": "/Win11_English_x64.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        },
+        {
+            "image": "/Windows11.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        },
+        {
+            "image": "/Windows.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        },
+        {
+            "image": "/_ISO/Win11.iso",
+            "template": [
+                "/ventoy/autounattend_auto.xml",
+                "/ventoy/autounattend_manual_disk.xml"
+            ]
+        }
+    ],
+    "menu_class": [
+        {
+            "key": "Win11",
+            "class": "windows_11"
+        },
+        {
+            "key": "windows_11",
+            "class": "windows_11"
+        },
+        {
+            "key": "Windows11",
+            "class": "windows_11"
+        },
+        {
+            "key": "Win10",
+            "class": "windows_10"
+        },
+        {
+            "key": "windows_10",
+            "class": "windows_10"
+        },
+        {
+            "key": "ubuntu-",
+            "class": "ubuntu"
+        },
+        {
+            "key": "archlinux-",
+            "class": "archlinux"
+        },
+        {
+            "key": "debian-",
+            "class": "debian"
+        },
+        {
+            "key": "Fedora-",
+            "class": "fedora"
+        },
+        {
+            "key": "linuxmint-",
+            "class": "linuxmint"
+        }
+    ]
+}

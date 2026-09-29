@@ -1,0 +1,20 @@
+# OS & System artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Large Media & Binary Files
+*.mp4
+*.iso
+*.dmg
+*.img.gz
+*.7z
+*.rar
+
+# Installation & runtime logs
+*.log
+install_report.txt
+
+# Editor directories
+.vscode/
+.idea/
